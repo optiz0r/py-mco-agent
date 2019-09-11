@@ -1,0 +1,16 @@
+{
+  "agent": "parrot",
+  "action": "invalid",
+  "requestid": "123456",
+  "senderid": "123456",
+  "callerid": "123456",
+  "collective": "mcollective",
+  "ttl": 30,
+  "msgtime": 1234567890,
+  "body": {
+    "agent": "parrot",
+    "action": "invalid",
+    "data": {},
+    "caller": "testuser"
+  }
+}

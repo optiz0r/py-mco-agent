@@ -1,0 +1,42 @@
+{
+  "$schema": "https://choria.io/schemas/mcorpc/ddl/v1/agent.json",
+  "metadata": {
+    "name": "parrot",
+    "description": "Example python agent",
+    "author": "Ben Roberts <me@benroberts.net>",
+    "license": "Apache-2.0",
+    "version": "0.1",
+    "url": "https://github.com/optiz0r/py-mco-agent",
+    "timeout": 10
+  },
+  "actions": [
+    {
+      "action": "echo",
+      "input": {
+        "message": {
+          "prompt": "Message",
+          "description": "Message to be repeated back",
+          "type": "string",
+          "default": "",
+          "optional": false
+        }
+      },
+      "output": {
+        "message": {
+          "description": "Message",
+          "display_as": "Message",
+          "default": null
+        }
+      },
+      "display": "always",
+      "description": "Example task which returns the given message"
+    },
+    {
+      "action": "invalid",
+      "input": {},
+      "output": {},
+      "display": "failed",
+      "description": "Example task which always fails"
+    }
+  ]
+}

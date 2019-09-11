@@ -1,0 +1,7 @@
+# Generated files
+*.pyc
+
+# Release artifacts
+/build
+/dist
+/py_mco_agent.egg-info
