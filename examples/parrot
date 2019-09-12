@@ -6,11 +6,13 @@ from mco_agent import Agent, action, dispatch, register_actions
 @register_actions
 class Parrot(Agent):
 
+    def should_activate(self):
+        return True
+
     @action
     def echo(self):
         """ Responds with the given input
 
-        :param request:
         return:
         """
         self.reply.data['message'] = self.request.data['message']

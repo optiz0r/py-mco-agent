@@ -7,6 +7,10 @@ class ImproperlyConfigured(AgentException):
     pass
 
 
+class UnknownProtocol(AgentException):
+    pass
+
+
 class InactiveAgent(AgentException):
     pass
 

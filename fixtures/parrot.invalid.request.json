@@ -1,4 +1,5 @@
 {
+  "protocol": "choria:mcorpc:external_request:1",
   "agent": "parrot",
   "action": "invalid",
   "requestid": "123456",

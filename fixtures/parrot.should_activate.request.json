@@ -1,0 +1,4 @@
+{
+  "protocol": "choria:mcorpc:external_activation_check:1",
+  "agent": "parrot"
+}
