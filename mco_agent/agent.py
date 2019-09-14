@@ -1,3 +1,6 @@
+from mco_agent.exceptions import UnknownRPCAction
+
+
 class Agent:
 
     _actions = {}
@@ -23,7 +26,7 @@ class Agent:
     def run(self):
         action_name = self.request.action
         if action_name not in self._actions:
-            self.reply.fail(1, 'Unknown action')
+            raise UnknownRPCAction(action_name)
 
         action_method = self._actions[action_name]
         action_method(self)

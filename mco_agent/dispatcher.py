@@ -2,8 +2,8 @@ import os
 import sys
 
 from mco_agent.agent import Agent
-from mco_agent.exceptions import InvalidRequest, ImproperlyConfigured, InactiveAgent, UnknownProtocol
-from mco_agent.protocol import ExternalRequestHeader, ExternalActivationCheckHeader, ProtocolMessage, Reply
+from mco_agent.exceptions import ImproperlyConfigured, InactiveAgent, RPCAborted, AgentException
+from mco_agent.protocol import ExternalRequestHeader, ExternalActivationCheckHeader, ProtocolMessage
 
 
 def dispatch(agent_cls):
@@ -54,16 +54,10 @@ def dispatch(agent_cls):
             try:
                 agent.run()
             except Exception as e:
-                reply.fail(1, 'Failed to run action: {0}'.format(str(e)))
+                raise RPCAborted(str(e))
 
-    except InvalidRequest as e:
-        reply.fail(1, 'Invalid request: {0}'.format(str(e)))
-
-    except InactiveAgent:
-        reply.fail(1, 'Agent is not active on this host')
-
-    except ImproperlyConfigured:
-        reply.fail(1, 'Invalid agent')
+    except AgentException as e:
+        reply.fail(e.statuscode, '{0}: {1}'.format(e.description, str(e)))
 
     output_file = os.environ.get('CHORIA_EXTERNAL_REPLY', None)
     if output_file:

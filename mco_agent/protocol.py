@@ -1,7 +1,7 @@
 import json
 from jsonschema import validate, ValidationError
 
-from mco_agent.exceptions import InvalidRequest, UnknownProtocol, ImproperlyConfigured
+from mco_agent.exceptions import InvalidRPCData
 
 
 class ProtocolMessage:
@@ -26,7 +26,7 @@ class ProtocolMessage:
     @classmethod
     def get_protocol(cls, protocol_name):
         if protocol_name not in cls._protocols:
-            raise UnknownProtocol(protocol_name)
+            raise InvalidRPCData("Unsupported message protocol {0}".format(protocol_name))
 
         protocol = cls._protocols[protocol_name]
         return protocol
@@ -49,7 +49,7 @@ class ProtocolMessage:
         except ValidationError as e:
             # Use of jsonschema is an implementation detail, so convert this error
             # into our own exception type
-            raise InvalidRequest(str(e))
+            raise InvalidRPCData(str(e))
 
         # Clone the message so as not to modify the original
         fields = message.copy()
@@ -78,7 +78,7 @@ class ProtocolMessage:
 
         :return: Reply
         """
-        raise ImproperlyConfigured('Method should only be called for a ProtocolMessage subclass')
+        raise InvalidRPCData('Method should only be called for a ProtocolMessage subclass')
 
     @classmethod
     def register_protocol(cls, protocol_name):
