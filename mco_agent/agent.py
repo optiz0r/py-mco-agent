@@ -1,3 +1,4 @@
+from mco_agent.config import AgentConfig
 from mco_agent.exceptions import UnknownRPCAction
 
 
@@ -6,8 +7,14 @@ class Agent:
     _actions = {}
 
     def __init__(self, request, reply):
+        self.agent_name = self.__class__.__name__.lower()
         self.request = request
         self.reply = reply
+        self.config = None
+
+    def load_config(self):
+        self.config = AgentConfig(self.agent_name)
+        self.config.read_config()
 
     # noinspection PyUnusedLocal
     @staticmethod

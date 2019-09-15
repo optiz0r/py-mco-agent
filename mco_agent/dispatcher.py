@@ -40,6 +40,7 @@ def dispatch(agent_cls):
                 request=None,
                 reply=reply
             )
+            agent.load_config()
             reply.activate = agent.should_activate() is True
 
         elif isinstance(request, ExternalRequestHeader):
@@ -47,6 +48,7 @@ def dispatch(agent_cls):
                 request=request.body,
                 reply=reply
             )
+            agent.load_config()
 
             if not agent.should_activate():
                 raise InactiveAgent()

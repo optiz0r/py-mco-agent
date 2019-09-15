@@ -15,7 +15,7 @@ class Parrot(Agent):
 
         return:
         """
-        self.reply.data['message'] = self.request.data['message']
+        self.reply.data['message'] = ''.join([self.config.get('prefix', ''), self.request.data['message']])
 
     @action
     def invalid(self):
