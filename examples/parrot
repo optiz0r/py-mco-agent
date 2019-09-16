@@ -19,6 +19,7 @@ class Parrot(Agent):
 
     @action
     def invalid(self):
+        self.logger.warning("Intentionally failing")
         self.reply.fail(1, "Invalid command")
 
 

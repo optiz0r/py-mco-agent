@@ -1,3 +1,5 @@
+import logging
+
 from mco_agent.config import AgentConfig
 from mco_agent.exceptions import UnknownRPCAction
 
@@ -11,6 +13,8 @@ class Agent:
         self.request = request
         self.reply = reply
         self.config = None
+
+        self.logger = logging.getLogger('mcorpc.{0}'.format(self.agent_name))
 
     def load_config(self):
         self.config = AgentConfig(self.agent_name)

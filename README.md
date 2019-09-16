@@ -48,7 +48,7 @@ Public methods:
   Returns a boolean value to indicate whether the agent should be activated on this host.
   By default returns True and the agent is always activated. Subclasses may choose to override
   this method and deactivate themselves under appropriate conditions such as missing pre-requisites.
-
+  
 Decorators:
 
 - `@action`
@@ -56,3 +56,11 @@ Decorators:
 - `@register_actions`
   The plugin class should be decorated with this method to trigger registration all action methods within
   
+Instance variables:
+
+- `logger`
+  Contains a python logger which can be used to send log information back to choria (debug and info are sent to stdout,
+  which is only displayed in verbose mode; warnings and errors are sent to stderr which are displayed always).
+  The logger is set to use the `mcorpc.agent_name` hierarchy. By default all other logging is disabled to prevent
+  pollution of the mcorpc reply. This is done by setting the log level on the root logger to 100. You can re-enable
+  logging by adjusting the log-level on either the root logger or a specific child if required.
