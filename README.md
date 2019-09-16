@@ -28,7 +28,10 @@ The bare minimum steps to implement a python mcollective agent are:
         @action
         def echo(self):
             # This example action just repeats the message input back to the caller
-            self.reply.data['message'] = self.request.data['message']
+            prefix = self.config.get('prefix', '')
+            if not prefix:
+                self.logger.warning("Using default prefix!")
+            self.reply.data['message'] = prefix + self.request.data['message']
 
     if __name__ == '__main__':
         dispatch(Parrot)
@@ -64,3 +67,7 @@ Instance variables:
   The logger is set to use the `mcorpc.agent_name` hierarchy. By default all other logging is disabled to prevent
   pollution of the mcorpc reply. This is done by setting the log level on the root logger to 100. You can re-enable
   logging by adjusting the log-level on either the root logger or a specific child if required.
+- `config`
+  Contains a dict-like object which can be used to read configuration settings from the agent's choria plugin
+  configuration file (`/etc/puppetlabs/mcollective/plugin.d/agentname.cfg` by default).
+  
