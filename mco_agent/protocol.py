@@ -1,7 +1,7 @@
 import json
 from jsonschema import validate, ValidationError
 
-from mco_agent.exceptions import InvalidRPCData
+from mco_agent.exceptions import InvalidRPCData, ImproperlyConfigured
 
 
 class ProtocolMessage:
@@ -30,7 +30,6 @@ class ProtocolMessage:
 
         protocol = cls._protocols[protocol_name]
         return protocol
-
 
     @classmethod
     def from_json(cls, request):
@@ -81,22 +80,27 @@ class ProtocolMessage:
         raise InvalidRPCData('Method should only be called for a ProtocolMessage subclass')
 
     @classmethod
-    def register_protocol(cls, protocol_name):
+    def register_protocol(cls):
         """ Registers the decorated class with the given protocol name so the correct
             ProtocolMessage object can be constructed when a message is received
 
-        :param protocol_name: str Name of the protocol
         :return:
         """
         def decorator(protocol_cls):
+            if not hasattr(protocol_cls, '_protocol'):
+                raise ImproperlyConfigured('ProtocolMessage classes must define _protocol name')
+
+            protocol_name = getattr(protocol_cls, '_protocol')
             cls._protocols[protocol_name] = protocol_cls
             return protocol_cls
 
         return decorator
 
 
-@ProtocolMessage.register_protocol('choria:mcorpc:external_activation_check:1')
+@ProtocolMessage.register_protocol()
 class ExternalActivationCheckHeader(ProtocolMessage):
+
+    _protocol = 'choria:mcorpc:external_activation_check:1'
 
     _schema = {
         "type": "object",
@@ -124,8 +128,10 @@ class RequestBody(ProtocolMessage):
     }
 
 
-@ProtocolMessage.register_protocol('choria:mcorpc:external_request:1')
+@ProtocolMessage.register_protocol()
 class ExternalRequestHeader(ProtocolMessage):
+
+    _protocol = 'choria:mcorpc:external_request:1'
 
     # noinspection PyProtectedMember
     _schema = {
