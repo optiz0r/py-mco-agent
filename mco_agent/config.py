@@ -57,5 +57,5 @@ class AgentConfig:
     def __getitem__(self, key):
         return self.config[key]
 
-    def get(self, key, default_value):
+    def get(self, key, default_value=None):
         return self.config.get(key, default_value)

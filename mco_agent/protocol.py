@@ -107,7 +107,12 @@ class ExternalActivationCheckHeader(ProtocolMessage):
         "properties": {
             "protocol": {"type": "string"},
             "agent": {"type": "string"},
-        }
+        },
+        "required": [
+            "protocol",
+            "agent"
+        ],
+        "maxProperties": 2
     }
 
     @staticmethod
@@ -124,7 +129,15 @@ class RequestBody(ProtocolMessage):
             "action": {"type": "string"},
             "data": {"type": "object"},
             "caller": {"type": "string"},
-        }
+        },
+        "required": [
+            "agent",
+            "action",
+            "data",
+            "caller"
+        ],
+        "maxProperties": 4
+
     }
 
 
@@ -147,7 +160,20 @@ class ExternalRequestHeader(ProtocolMessage):
             "ttl": {"type": "number"},
             "msgtime": {"type": "number"},
             "body": RequestBody._schema,
-        }
+        },
+        "required": [
+            "protocol",
+            "agent",
+            "action",
+            "requestid",
+            "senderid",
+            "callerid",
+            "collective",
+            "ttl",
+            "msgtime",
+            "body"
+        ],
+        "maxProperties": 10
     }
 
     @classmethod
