@@ -1,5 +1,6 @@
 {
   "$schema": "https://choria.io/schemas/mcorpc/ddl/v1/agent.json",
+  "provider": "external",
   "metadata": {
     "name": "parrot",
     "description": "Example python agent",
