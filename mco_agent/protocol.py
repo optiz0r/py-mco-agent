@@ -18,7 +18,7 @@ class ProtocolMessage:
 
     def __init__(
             self,
-            **kwargs,
+            **kwargs
     ):
         for prop in self._schema["properties"]:
             setattr(self, prop, kwargs.get(prop, None))
@@ -187,19 +187,17 @@ class ExternalRequestHeader(ProtocolMessage):
 
 class Reply:
 
+    def __init__(self, *args, **kwargs):
+        pass
+
     def successful(self):
         return True
 
 
 class ActionReply(Reply):
 
-    def __init__(
-            self,
-            statuscode=0,
-            statusmsg='',
-            data=None,
-            disableresponse=False,
-    ):
+    def __init__(self, statuscode=0, statusmsg='', data=None, disableresponse=False, *args, **kwargs):
+        Reply.__init__(self, *args, **kwargs)
         self.statuscode = statuscode
         self.statusmsg = statusmsg
         self.data = data
@@ -227,7 +225,8 @@ class ActionReply(Reply):
 
 class ActivationReply(Reply):
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        Reply.__init__(self, *args, **kwargs)
         self.activate = True
 
     def fail(self):
