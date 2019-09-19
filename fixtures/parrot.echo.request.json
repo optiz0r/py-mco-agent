@@ -1,5 +1,6 @@
 {
-  "protocol": "choria:mcorpc:external_request:1",
+  "$schema": "https://choria.io/schemas/mcorpc/external/v1/rpc_request.json",
+  "protocol": "io.choria.mcorpc.external.v1.rpc_request",
   "agent": "parrot",
   "action": "echo",
   "requestid": "123456",
@@ -8,12 +9,7 @@
   "collective": "mcollective",
   "ttl": 30,
   "msgtime": 1234567890,
-  "body": {
-    "agent": "parrot",
-    "action": "echo",
-    "data": {
-      "message": "Hello world!"
-    },
-    "caller": "testuser"
+  "data": {
+    "message": "Hello world!"
   }
 }

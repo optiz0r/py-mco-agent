@@ -19,6 +19,9 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/optiz0r/py-mco-agent",
     packages=setuptools.find_packages(),
+    package_data = {
+        'mco_agent': ['schema/*.json'],
+    },
     classifiers=[
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",

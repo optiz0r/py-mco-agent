@@ -1,4 +1,6 @@
 import json
+import os
+
 from jsonschema import validate, ValidationError
 
 from mco_agent.exceptions import InvalidRPCData, ImproperlyConfigured
@@ -10,18 +12,36 @@ class ProtocolMessage:
     # Filled in by calls to register_protocol
     _protocols = {}
 
-    # To be overridden by subclasses
-    _schema = {
-        "type": "object",
-        "properties": {},
-    }
+    _protocol = None
+    _schema = None
 
     def __init__(
             self,
             **kwargs
     ):
+        if self._schema is None:
+            raise ImproperlyConfigured("Must call {0}.load_schema before constructing an object".format(
+                self.__class__.__name__))
+
+        self._properties = {}
         for prop in self._schema["properties"]:
-            setattr(self, prop, kwargs.get(prop, None))
+            self._properties[prop] = kwargs.get(prop, None)
+
+    def __getattr__(self, item):
+        if item not in self._properties:
+            raise AttributeError(item)
+
+        return self._properties[item]
+
+    @classmethod
+    def load_schema(cls):
+        if cls._schema is not None:
+            return
+
+        schema_dir = os.path.join(os.path.dirname(__file__), 'schemas')
+
+        with open(os.path.join(schema_dir, '{0}.json'.format(cls._protocol)), 'r') as fp:
+            cls._schema = json.load(fp)
 
     @classmethod
     def get_protocol(cls, protocol_name):
@@ -38,12 +58,13 @@ class ProtocolMessage:
 
     @classmethod
     def from_dict(cls, message):
-        """ Cosntructs a ProtocolMessage object from a dictionary of fields
+        """ Constructs a ProtocolMessage object from a dictionary of fields
 
         :param message: dict Message fields received
         """
+        cls.load_schema()
+
         try:
-            # noinspection PyProtectedMember
             validate(message, cls._schema)
         except ValidationError as e:
             # Use of jsonschema is an implementation detail, so convert this error
@@ -86,99 +107,32 @@ class ProtocolMessage:
 
         :return:
         """
+
+        # noinspection PyProtectedMember
         def decorator(protocol_cls):
-            if not hasattr(protocol_cls, '_protocol'):
+            if protocol_cls._protocol is None:
                 raise ImproperlyConfigured('ProtocolMessage classes must define _protocol name')
 
-            protocol_name = getattr(protocol_cls, '_protocol')
-            cls._protocols[protocol_name] = protocol_cls
+            cls._protocols[protocol_cls._protocol] = protocol_cls
             return protocol_cls
 
         return decorator
 
 
 @ProtocolMessage.register_protocol()
-class ExternalActivationCheckHeader(ProtocolMessage):
+class ExternalActivationRequest(ProtocolMessage):
 
-    _protocol = 'choria:mcorpc:external_activation_check:1'
-
-    _schema = {
-        "type": "object",
-        "properties": {
-            "protocol": {"type": "string"},
-            "agent": {"type": "string"},
-        },
-        "required": [
-            "protocol",
-            "agent"
-        ],
-        "maxProperties": 2
-    }
+    _protocol = 'io.choria.mcorpc.external.v1.activation_request'
 
     @staticmethod
     def create_reply():
         return ActivationReply()
 
 
-class RequestBody(ProtocolMessage):
-
-    _schema = {
-        "type": "object",
-        "properties": {
-            "agent": {"type": "string"},
-            "action": {"type": "string"},
-            "data": {"type": "object"},
-            "caller": {"type": "string"},
-        },
-        "required": [
-            "agent",
-            "action",
-            "data",
-            "caller"
-        ],
-        "maxProperties": 4
-
-    }
-
-
 @ProtocolMessage.register_protocol()
-class ExternalRequestHeader(ProtocolMessage):
+class ExternalRPCRequest(ProtocolMessage):
 
-    _protocol = 'choria:mcorpc:external_request:1'
-
-    # noinspection PyProtectedMember
-    _schema = {
-        "type": "object",
-        "properties": {
-            "protocol": {"type": "string"},
-            "agent": {"type": "string"},
-            "action": {"type": "string"},
-            "requestid": {"type": "string"},
-            "senderid": {"type": "string"},
-            "callerid": {"type": "string"},
-            "collective": {"type": "string"},
-            "ttl": {"type": "number"},
-            "msgtime": {"type": "number"},
-            "body": RequestBody._schema,
-        },
-        "required": [
-            "protocol",
-            "agent",
-            "action",
-            "requestid",
-            "senderid",
-            "callerid",
-            "collective",
-            "ttl",
-            "msgtime",
-            "body"
-        ],
-        "maxProperties": 10
-    }
-
-    @classmethod
-    def parse_message_hook(cls, fields):
-        fields["body"] = RequestBody.from_dict(fields["body"])
+    _protocol = 'io.choria.mcorpc.external.v1.rpc_request'
 
     @staticmethod
     def create_reply():
@@ -196,6 +150,8 @@ class Reply:
 
 class ActionReply(Reply):
 
+    _protocol = 'io.choria.mcorpc.external.v1.rpc_reply'
+
     def __init__(self, statuscode=0, statusmsg='', data=None, disableresponse=False, *args, **kwargs):
         Reply.__init__(self, *args, **kwargs)
         self.statuscode = statuscode
@@ -211,7 +167,6 @@ class ActionReply(Reply):
             'statuscode': self.statuscode,
             'statusmsg': self.statusmsg,
             'data': self.data,
-            'disableresponse': self.disableresponse,
         })
         return message
 
@@ -224,6 +179,8 @@ class ActionReply(Reply):
 
 
 class ActivationReply(Reply):
+
+    _protocol = 'io.choria.mcorpc.external.v1.activation_reply'
 
     def __init__(self, *args, **kwargs):
         Reply.__init__(self, *args, **kwargs)

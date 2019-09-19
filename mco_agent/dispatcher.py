@@ -6,7 +6,7 @@ import sys
 
 from mco_agent.agent import Agent
 from mco_agent.exceptions import ImproperlyConfigured, InactiveAgent, RPCAborted, AgentException
-from mco_agent.protocol import ExternalRequestHeader, ExternalActivationCheckHeader, ProtocolMessage
+from mco_agent.protocol import ExternalRPCRequest, ExternalActivationRequest, ProtocolMessage
 
 
 def dispatch(agent_cls):
@@ -17,7 +17,6 @@ def dispatch(agent_cls):
     :param agent_cls: Agent Subclass of Agent which implements actions
     :return:
     """
-
     setup_logger(enable_debug=os.environ.get('CHORIA_EXTERNAL_DEBUG', '0'))
 
     protocol_name = os.environ.get('CHORIA_EXTERNAL_PROTOCOL', None)
@@ -34,11 +33,23 @@ def dispatch(agent_cls):
 
         request = read_request(protocol, os.environ.get('CHORIA_EXTERNAL_REQUEST', None))
 
-        if isinstance(request, ExternalActivationCheckHeader):
-            activation_check(agent_cls, reply)
+        agent = agent_cls(
+            request=request,
+            reply=reply
+        )
+        agent.load_config()
 
-        elif isinstance(request, ExternalRequestHeader):
-            run_action(agent_cls, request, reply)
+        if isinstance(request, ExternalActivationRequest):
+            reply.activate = agent.should_activate() is True
+
+        elif isinstance(request, ExternalRPCRequest):
+            if not agent.should_activate():
+                raise InactiveAgent()
+
+            try:
+                agent.run()
+            except Exception as e:
+                raise RPCAborted(str(e))
 
     except AgentException as e:
         reply.fail(e.statuscode, '{0}: {1}'.format(e.description, str(e)))
@@ -116,28 +127,3 @@ def write_reply(reply_file, reply):
             fp.write(reply.to_json())
     else:
         print(reply.to_json())
-
-
-def activation_check(agent_cls, reply):
-    agent = agent_cls(
-        request=None,
-        reply=reply
-    )
-    agent.load_config()
-    reply.activate = agent.should_activate() is True
-
-
-def run_action(agent_cls, request, reply):
-    agent = agent_cls(
-        request=request.body,
-        reply=reply
-    )
-    agent.load_config()
-
-    if not agent.should_activate():
-        raise InactiveAgent()
-
-    try:
-        agent.run()
-    except Exception as e:
-        raise RPCAborted(str(e))

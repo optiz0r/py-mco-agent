@@ -2,7 +2,7 @@ import json
 import unittest
 
 from mco_agent.exceptions import InvalidRPCData
-from mco_agent.protocol import ProtocolMessage, ExternalRequestHeader, RequestBody, ExternalActivationCheckHeader, \
+from mco_agent.protocol import ProtocolMessage, ExternalRPCRequest, ExternalActivationRequest, \
     ActivationReply, ActionReply
 
 
@@ -41,8 +41,9 @@ class TestProtocolMessage(unittest.TestCase):
         self.assertIn(protocol_name, ProtocolMessage._protocols)
 
     def test_parse_valid_external_request(self):
-        request = ExternalRequestHeader.from_dict({
-            'protocol': 'choria:mcorpc:external_request:1',
+        request = ExternalRPCRequest.from_dict({
+            '$schema': 'https://choria.io/schemas/mcorpc/external/v1/rpc_request.json',
+            'protocol': 'io.choria.mcorpc.external.v1.rpc_request',
             'agent': 'testagent',
             'action': 'testaction',
             'requestid': '123',
@@ -51,30 +52,22 @@ class TestProtocolMessage(unittest.TestCase):
             'collective': 'mcollective',
             'ttl': 30,
             'msgtime': 123,
-            'body': {
-                'agent': 'testagent',
-                'action': 'testaction',
-                'data': {},
-                'caller': 'testuser.mcollective',
-            }
+            'data': {},
         })
 
-        self.assertIsInstance(request, ExternalRequestHeader)
-        self.assertIsInstance(request.body, RequestBody)
+        self.assertIsInstance(request, ExternalRPCRequest)
         self.assertEqual('testagent', request.agent)
         self.assertEqual('testaction', request.action)
-        # noinspection PyUnresolvedReferences
-        self.assertEqual('testuser.mcollective', request.body.caller)
 
     def test_parse_invalid_external_request(self):
         with self.assertRaises(InvalidRPCData):
-            ExternalRequestHeader.from_dict({
+            ExternalRPCRequest.from_dict({
                 'invalid_dict': True,
             })
 
         with self.assertRaises(InvalidRPCData):
-            ExternalRequestHeader.from_dict({
-                'protocol': 'choria:mcorpc:external_request:1',
+            ExternalRPCRequest.from_dict({
+                'protocol': 'io.choria.mcorpc.external.v1.rpc_request',
                 'agent': 'testagent',
                 'action': 'testaction',
                 'requestid': '123',
@@ -83,22 +76,18 @@ class TestProtocolMessage(unittest.TestCase):
                 'collective': 'mcollective',
                 'ttl': 30,
                 'msgtime': 123,
-                'body': {
-                    'agent': 'testagent',
-                    'action': 'testaction',
-                    'data': {},
-                    'caller': 'testuser.mcollective',
-                },
+                'data': {},
                 'extra_field': True,
             })
 
     def test_parse_valid_activation_check(self):
-        request = ExternalActivationCheckHeader.from_dict({
-            'protocol': 'choria:mcorpc:external_request:1',
+        request = ExternalActivationRequest.from_dict({
+            '$schema': 'https://choria.io/schemas/mcorpc/external/v1/activation_request.json',
+            'protocol': 'io.choria.mcorpc.external.v1.activation_request',
             'agent': 'testagent',
         })
 
-        self.assertIsInstance(request, ExternalActivationCheckHeader)
+        self.assertIsInstance(request, ExternalActivationRequest)
         self.assertEqual('testagent', request.agent)
 
     def test_activation_reply_mark_failure(self):
@@ -120,11 +109,10 @@ class TestProtocolMessage(unittest.TestCase):
     def test_action_reply_reply_serialisation(self):
         reply = ActionReply()
         result = json.loads(reply.to_json())
-        self.assertEqual(4, len(result.keys()))
+        self.assertEqual(3, len(result.keys()))
         self.assertIn('statuscode', result)
         self.assertIn('statusmsg', result)
         self.assertIn('data', result)
-        self.assertIn('disableresponse', result)
 
     def test_action_reply_mark_failure(self):
         reply = ActionReply()
