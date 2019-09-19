@@ -83,8 +83,8 @@ def setup_logger(enable_debug=False):
     warn = logging.StreamHandler(sys.stderr)
     warn.setLevel(logging.WARNING)
 
-    logger.addHandler(info)
-    logger.addHandler(warn)
+    root_logger.addHandler(info)
+    root_logger.addHandler(warn)
 
 
 def read_request(protocol, request_file):
