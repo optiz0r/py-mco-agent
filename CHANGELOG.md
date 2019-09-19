@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1 - 2019-09-19
+
+* Strip tests from packages
+
 ## 0.3 - 2019-09-19
 
 * Fix schemas packaging error
@@ -12,3 +16,4 @@
 ## 0.1 - 2019-09-18
 
 * Initial release
+
