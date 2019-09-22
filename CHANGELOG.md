@@ -4,6 +4,7 @@
 
 * Use choria plugin configuration directory from environment if set
   [mcorpc-agent-provider#121](https://github.com/choria-io/mcorpc-agent-provider/issues/121)
+* Fix inclusion of schemas within package
 
 ## 0.3.1 - 2019-09-19
 

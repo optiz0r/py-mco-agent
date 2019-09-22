@@ -20,7 +20,7 @@ setuptools.setup(
     url="https://github.com/optiz0r/py-mco-agent",
     packages=setuptools.find_packages(exclude=['tests*']),
     package_data = {
-        'mco_agent': ['mco_agent/schemas/*.json'],
+        'mco_agent': ['schemas/*.json'],
     },
     classifiers=[
         "Programming Language :: Python :: 2",
