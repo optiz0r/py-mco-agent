@@ -1,5 +1,10 @@
 # Changelog
 
+## NEXT
+
+* Use choria plugin configuration directory from environment if set
+  [mcorpc-agent-provider#121](https://github.com/choria-io/mcorpc-agent-provider/issues/121)
+
 ## 0.3.1 - 2019-09-19
 
 * Strip tests from packages

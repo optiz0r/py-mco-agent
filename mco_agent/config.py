@@ -9,7 +9,7 @@ class AgentConfig:
 
     def __init__(self, agent_name):
         self.agent_name = agent_name
-        self.config_file = os.path.join(self.CONFIG_DIR, '{0}.cfg'.format(self.agent_name))
+        self.config_file = os.path.join(os.environ.get('CHORIA_EXTERNAL_CONFIG', self.CONFIG_DIR), '{0}.cfg'.format(self.agent_name))
         self.config = {}
 
     def config_exists(self):
