@@ -1,6 +1,6 @@
 # Changelog
 
-## NEXT
+## 0.3.2 - 2019-09-22
 
 * Use choria plugin configuration directory from environment if set
   [mcorpc-agent-provider#121](https://github.com/choria-io/mcorpc-agent-provider/issues/121)
