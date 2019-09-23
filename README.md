@@ -37,7 +37,7 @@ The bare minimum steps to implement a python mcollective agent are:
         dispatch(Parrot)
 ```
         
-* Add a choria JSON DDL file to the same location named `parrot.json` (see `examples/parrot.json`)
+* Add a choria JSON DDL file to the same location named `parrot.json` (see `examples/agent/parrot.json`)
 
 ## Reference
 
