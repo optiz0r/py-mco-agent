@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.3 - 2019-09-24
+
+* Added jsonschema dependency to packages
+
 ## 0.3.2 - 2019-09-22
 
 * Use choria plugin configuration directory from environment if set
