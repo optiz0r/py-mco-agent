@@ -45,10 +45,11 @@ rpm-python3:
 	python3 ./setup.py bdist_rpm --release ${RELEASE} --python python3
 
 clean:
+	rm -rf build
 	rm -rf $(PROJECT).egg-info/
 
 clobber: clean
-	rm -f *.rpm
+	rm -f dist/*.rpm
 
 # Release targets
 
