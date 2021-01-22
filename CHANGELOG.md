@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0 - 2021-01-22
+
+* Extract protocol handling into separate py-choria-external package
+
 ## 0.3.3 - 2019-09-24
 
 * Added jsonschema dependency to packages

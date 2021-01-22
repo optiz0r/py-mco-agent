@@ -14,13 +14,13 @@ setuptools.setup(
     version=pkg_version,
     author="Ben Roberts",
     author_email="me@benroberts.net",
-    description="A library for implementing Mcollecting agents in Python",
+    description="A library for implementing Choria/Mcollective agents in Python",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/optiz0r/py-mco-agent",
     packages=setuptools.find_packages(exclude=['tests*']),
     include_package_data=True,
-    package_data = {
+    package_data={
         'mco_agent': ['schemas/*.json'],
     },
     classifiers=[
@@ -31,6 +31,6 @@ setuptools.setup(
     ],
     python_requires='>=2.6',
     install_requires=[
-        'jsonschema',
+        'py-choria-external',
     ]
 )

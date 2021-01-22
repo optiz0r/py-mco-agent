@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
-from mco_agent import Agent, action, dispatch, register_actions
+from choria_external.dispatcher import dispatch
+from mco_agent import Agent, action, register_actions
 
 
 @register_actions

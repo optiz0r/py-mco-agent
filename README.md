@@ -17,24 +17,25 @@ The bare minimum steps to implement a python mcollective agent are:
 * Add a python file without a `.py` extension to `/opt/puppetlabs/mcollective/plugins/mcollective/agent/parrot`
 
 ```python
-    #!/usr/bin/python3
-    from mco_agent import Agent, action, dispatch, register_actions
+#!/usr/bin/python3
+from choria_external.dispatcher import dispatch
+from mco_agent import Agent, action, register_actions
 
-    # Subclass Agent and decorate it with the @register_actions
-    @register_actions
-    class Parrot(Agent):
-    
-        # Create a class method for your action and decorate it with @action
-        @action
-        def echo(self):
-            # This example action just repeats the message input back to the caller
-            prefix = self.config.get('prefix', '')
-            if not prefix:
-                self.logger.warning("Using default prefix!")
-            self.reply.data['message'] = prefix + self.request.data['message']
+# Subclass Agent and decorate it with the @register_actions
+@register_actions
+class Parrot(Agent):
 
-    if __name__ == '__main__':
-        dispatch(Parrot)
+    # Create a class method for your action and decorate it with @action
+    @action
+    def echo(self):
+        # This example action just repeats the message input back to the caller
+        prefix = self.config.get('prefix', '')
+        if not prefix:
+            self.logger.warning("Using default prefix!")
+        self.reply.data['message'] = prefix + self.request.data['message']
+
+if __name__ == '__main__':
+    dispatch(Parrot)
 ```
         
 * Add a choria JSON DDL file to the same location named `parrot.json` (see `examples/agent/parrot.json`)
